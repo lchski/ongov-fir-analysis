@@ -5,6 +5,8 @@ library(janitor)
 library(helpers)
 
 ## Schedule 40 "CONSOLIDATED STATEMENT OF OPERATIONS: EXPENSES" from Ottawa
+## Excel files from: https://efis.fma.csc.gov.on.ca/fir/ViewFIR2018.htm
+## TODO: make this generic loader for all in folder, and extract FY / municipality name from filename
 ottawa_expenses <- read_excel(
     "data/source/ongov-fir/FI180614 Ottawa C.xlsx",
     sheet = "40",
