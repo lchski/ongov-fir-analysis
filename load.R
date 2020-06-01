@@ -8,7 +8,7 @@ library(helpers)
 ## Excel files from: https://efis.fma.csc.gov.on.ca/fir/ViewFIR2018.htm
 ## TODO: make this generic loader for all in folder, and extract FY / municipality name from filename
 ottawa_expenses <- read_excel(
-    "data/source/ongov-fir/FI180614 Ottawa C.xlsx",
+    "data/source/ongov-fir/cities/FI180614 Ottawa C.xlsx",
     sheet = "40",
     skip = 9,
     col_names = c(
@@ -87,9 +87,14 @@ ottawa_expenses <- read_excel(
     )
   ) %>%
   clean_names() %>%
+  remove_empty(c("rows", "cols")) %>% ## clear out empties from Excel formatting
   remove_extra_columns() %>%
   select(-contains("dropme")) %>%
   mutate(expense_category = str_remove_all(expense_category, fixed(" . "))) %>%
   mutate(expense_category = str_remove(expense_category, " \\.$")) %>%
-  filter(! is.na(total_expenses_after_adjustments)) %>% ## remove all rows without money values NB and FIXME / TODO this removes the category grouping e.g., "Protection services"
   mutate(is_totaling_row = str_detect(expense_code, "99")) ## identify all (sub)total rows
+
+
+fir2018 <- read_csv("data/source/ongov-fir/comprehensive/fir_data_2018.csv") %>%
+  clean_names()
+
