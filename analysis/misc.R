@@ -44,3 +44,33 @@ ottawa_sched_40 %>%
   select(schedule_line_desc, spend = amount, spend_pct) %>%
   arrange(-spend_pct)
 
+
+
+
+sched_40 <- fir2018 %>%
+  filter(schedule_desc == "CONSOLIDATED STATEMENT OF OPERATIONS: EXPENSES") %>%
+  remove_extra_columns() %>%
+  mutate(is_subtotal_entry = schedule_line_desc %in% sched_40_groups) %>% ## TODO: do this with detect 99 in `slc` instead
+  mutate(expense_group = ifelse(is_subtotal_entry, schedule_line_desc, NA_character_)) %>%
+  group_by(municipality_desc) %>%
+  select(expense_group, everything()) %>%
+  fill(expense_group, .direction = "up") %>%
+  mutate(is_total_entry = schedule_line_desc == "Total")
+
+sched_40 %>% filter(tier_code == "ST") %>%
+  filter(! is_subtotal_entry & ! is_total_entry) %>%
+  filter(schedule_column_desc == "Total Expenses After Adjustments") %>%
+  mutate(spend_pct = amount / sum(amount)) %>%
+  select(schedule_line_desc, spend = amount, spend_pct) %>%
+  arrange(-spend_pct) %>%
+  filter(municipality_desc %in%
+           (sched_40 %>%
+              filter(schedule_line_desc == "Police") %>%
+              select(municipality_desc) %>%
+              unique() %>%
+              pull()
+            )
+         ) %>%
+  filter(schedule_line_desc == "Police") %>%
+  View()
+
