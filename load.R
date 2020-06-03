@@ -8,7 +8,7 @@ library(helpers)
 ## NB: uncomment to download/update yearly summaries
 #source("scripts/download-annual-summaries.R")
 
-# TODO: make this generic loader for all in folder, use .zip directly (can even write a downloader)
-fir2018 <- read_csv("data/source/ongov-fir/comprehensive/fir_data_2018.csv") %>%
-  clean_names()
+returns <- fs::dir_ls("data/source/ongov-fir/comprehensive/", glob = "*.zip") %>%
+  map_df(read_csv, .id = "source_file") %>%
+  clean_names
 
