@@ -1,4 +1,4 @@
-library(tidvyerse)
+library(tidyverse)
 library(rvest)
 
 download_annual_summaries <- function() {
